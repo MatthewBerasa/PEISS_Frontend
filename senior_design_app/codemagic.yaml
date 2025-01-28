@@ -5,12 +5,13 @@ workflows:
     max_build_duration: 120
     environment:
       flutter: stable
+    project_path: senior_design_app 
     scripts:
       - flutter clean
       - flutter pub get
       - flutter build ios --release --no-codesign
     artifacts:
-      - build/ios/iphoneos/*.ipa
+      - build/ios/iphoneos/*.ipa  
     cache:
       paths:
         - build/
