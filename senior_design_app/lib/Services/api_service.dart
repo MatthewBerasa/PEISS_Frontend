@@ -152,6 +152,15 @@ class ApiService {
     return json.decode(response.body); 
   }
 
+  //Method for getting DeviceID
+  static Future<Map<String, dynamic>> getDeviceID() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/getDeviceID'),
+    );
+
+    return json.decode(response.body);
+  }
+
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
   final response = await http.post(
     Uri.parse('$baseUrl/refresh_token'),

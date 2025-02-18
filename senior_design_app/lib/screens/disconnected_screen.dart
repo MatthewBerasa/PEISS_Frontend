@@ -8,6 +8,8 @@ import '../screens/login_screen.dart'; //Login Screen
 import '../screens/activitylogs_screen.dart';
 import '../components.dart'; // Import components.dart
 
+import 'package:wifi_iot/wifi_iot.dart';
+
 //Reference Sizes
 final baseHeight = 914;
 final baseWidth = 411;
@@ -18,8 +20,6 @@ class DisconnectedScreen extends StatefulWidget {
 }
 
 class _DisconnectedScreenState extends State<DisconnectedScreen> {
-  TextEditingController _DeviceID = TextEditingController();
-
   String? connectionResult;
 
   void initState(){
@@ -52,88 +52,72 @@ void _ConnectPressed() async {
         builder: (context, setDialogState) {
           return AlertDialog(
             title: Text(
-              'Enter System ID',
-              style: TextStyle(fontSize: 15),
+              'Connecting...',
+              style: TextStyle(fontSize: 15, color: Colors.black)
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TextField(
-                  controller: _DeviceID,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    connectionResult ?? '',
-                    style: TextStyle(
-                      fontSize: (MediaQuery.of(context).size.height / baseHeight) * 18,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
+                CircularProgressIndicator(),
               ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  setDialogState((){
-                    connectionResult = null;
-                  });
-                  _DeviceID.clear();
-                  Navigator.of(context).pop();
-                },
-                child: Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  _TryConnect(setDialogState); // Pass setDialogState to _TryConnect
-                },
-                child: Text('Submit'),
-              ),
-            ],
+            )
           );
         },
       );
     },
   );
+
+  await _TryConnect();
 }
 
-void _TryConnect(StateSetter setDialogState) async {
-  setDialogState(() {
-    connectionResult = _DeviceID.text.isEmpty ? 'Must Enter System ID.' : null;
-  });
+Future<void> connectToESP32() async {
+  bool connected = await WiFiForIoTPlugin.connect(
+    "PEISS-System Setup", 
+    password: "PEISS_Spring2025",
+    security: NetworkSecurity.WPA,
+    joinOnce: true,
+    withInternet: false
+  );
 
-  if (connectionResult != null) {
-    return;
+  if (connected) {
+    print("Connected to ESP32 AP");
+    WiFiForIoTPlugin.forceWifiUsage(true);  // Forces Flutter to use ESP32's WiFi
+  } else {
+    print("Failed to connect to ESP32 AP");
   }
+}
 
-  connectionResult = null;
-
-  // Set response body data to string
-  String deviceID = _DeviceID.text;
+Future<void> _TryConnect() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? userID = prefs.getString('userID');
 
-  // Make API Call
-  var response = await ApiService.connectSystem(deviceID, userID.toString());
+  //Connect to ESP32 Access Point
+  await connectToESP32();
 
-  setDialogState(() {
-    if (response['error'] != null) {
-      connectionResult = 'Connection Failed. Please Try Again.';
-    } else {
-      connectionResult = null;
-      prefs.setString('deviceID', deviceID);
-      Navigator.of(context).pop();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ConnectedScreen()),
-      );
-    }
-  });
+  var response = await ApiService.getDeviceID();
+
+  if(response['error'] != null){
+    Navigator.of(context).pop();
+    print("Failed to retrieve DeviceID.");
+  }else{
+    prefs.setString('deviceID', response['deviceID']);
+  }
+
+  // Make API Call
+  var connectionResponse = await ApiService.connectSystem(response['deviceID'], userID.toString());
+
+  Navigator.of(context).pop();
+
+  if(connectionResponse['error'] == null){
+    print(connectionResponse['error']);
+  }else{
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => ConnectedScreen())
+    );
+  }
+  
 }
 
 
