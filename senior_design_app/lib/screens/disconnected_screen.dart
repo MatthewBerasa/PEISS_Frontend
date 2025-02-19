@@ -19,11 +19,14 @@ class DisconnectedScreen extends StatefulWidget {
 
 class _DisconnectedScreenState extends State<DisconnectedScreen> {
   String? connectionResult;
+  // This variable indicates whether the system is already connected to WiFi.
+  bool systemWiFiConnected = false; 
 
   @override
   void initState() {
     super.initState();
     _refreshToken();
+    _checkSystemWiFiConnection();
   }
 
   void _refreshToken() async {
@@ -41,32 +44,85 @@ class _DisconnectedScreenState extends State<DisconnectedScreen> {
     }
   }
 
+  void _checkSystemWiFiConnection() async{
+    var deviceIDResponse = await ApiService.getDeviceID();
+
+    if(deviceIDResponse['error'] != null){
+      print("Failed to retrieve Device ID.");
+      return;
+    }
+
+    var connectionResponse = await ApiService.checkSystemWiFiConnection(deviceIDResponse['deviceID']);
+    if(connectionResponse['error'] != null){
+      print(connectionResponse['error']);
+      return;
+    }
+
+    systemWiFiConnected = connectionResponse['status']['wifiConnection'];
+  }
+
+  Widget _buildConnectionInstructions() {
+    if (systemWiFiConnected) {
+      // If system is already connected to WiFi, instruct user to simply press Continue.
+      return Text("System already connected to Wi-Fi. Simply press 'Continue' to connect to system.");
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Please follow these steps:"),
+          SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 10),
+          Text("1. Open your WiFi settings"),
+          Text("2. Select 'PEISS-System Setup'"),
+          Text("3. Password: PEISS_Spring2025"),
+          Text("4. Complete the setup in the portal"),
+          Text("5. Return to app and click 'Continue'"),
+        ],
+      );
+    }
+  }
+
   void _ConnectPressed() async {
     showDialog(
-      barrierDismissible: false,
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
+        return Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+              contentPadding: EdgeInsets.all(16),
+              insetPadding: EdgeInsets.symmetric(horizontal: 20),
               title: Text(
-                'Connecting...',
-                style: TextStyle(fontSize: 15, color: Colors.black)
+                'Connect to PEISS System',
+                style: TextStyle(fontSize: 18),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                ],
-              )
-            );
-          },
+              content: Container(
+                width: MediaQuery.of(context).size.width / baseWidth * 0.8,
+                constraints: BoxConstraints(
+                  maxWidth: 400,
+                  minWidth: 300,
+                ),
+                child: _buildConnectionInstructions(),
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Continue'),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await _TryConnect();
+                  },
+                ),
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
-
-    await _TryConnect();
   }
 
   Future<void> connectToESP32() async {
@@ -75,7 +131,7 @@ class _DisconnectedScreenState extends State<DisconnectedScreen> {
       password: "PEISS_Spring2025",
       security: NetworkSecurity.WPA,
       joinOnce: true,
-      withInternet: false
+      withInternet: false,
     );
 
     if (connected) {
@@ -87,40 +143,62 @@ class _DisconnectedScreenState extends State<DisconnectedScreen> {
   }
 
   Future<void> _TryConnect() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userID = prefs.getString('userID');
-
-    await connectToESP32();
-    
-    await Future.delayed(Duration(seconds: 2));
-    
-    final Uri portalUrl = Uri.parse('http://192.168.4.1');
-    if (!await launchUrl(portalUrl, mode: LaunchMode.externalApplication)) {
-      print('Could not launch portal');
+    // Get device ID from API
+    var deviceIDResponse = await ApiService.getDeviceID();
+    if (deviceIDResponse['error'] != null) {
+      print("Failed to get Device ID");
+      return;
     }
 
-    var response = await ApiService.getDeviceID();
-
-    if (response['error'] != null) {
-      Navigator.of(context).pop();
-      print("Failed to retrieve DeviceID.");
-    } else {
-      prefs.setString('deviceID', response['deviceID']);
-    }
-
-    var connectionResponse = await ApiService.connectSystem(
-      response['deviceID'],
-      userID.toString()
+    // Check system WiFi connection status via API.
+    var wifiConnectionResponse = await ApiService.checkSystemWiFiConnection(
+      deviceIDResponse['deviceID']
     );
+    if (wifiConnectionResponse['error'] != null) {
+      print(wifiConnectionResponse['error']);
+      return;
+    }
 
-    Navigator.of(context).pop();
+    // If system is connected to WiFi, then proceed.
+    if (wifiConnectionResponse['status']['wifiConnection']) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('deviceID', deviceIDResponse['deviceID']);
 
-    if (connectionResponse['error'] == null) {
-      print(connectionResponse['error']);
+      String? deviceID = prefs.getString('deviceID');
+      String? userID = prefs.getString('userID');
+
+      // Call API to connect user to system
+      var response = await ApiService.connectSystem(
+        deviceID.toString(), userID.toString()
+      );
+
+      if (response['error'] != null) {
+        print(response['error']);
+        return;
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ConnectedScreen())
+        );
+      }
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ConnectedScreen())
+      // Display AlertBox indicating connection failure
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Connection Error'),
+            content: Text('Failed to connect system to WiFi. Please try again.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -166,10 +244,8 @@ class _DisconnectedScreenState extends State<DisconnectedScreen> {
                     child: LogoutButton(onPressed: _Logout),
                   ),
                 ),
-                
                 PEISSText(),
                 PEISSLogo(),
-                
                 SizedBox(
                   width: (MediaQuery.of(context).size.width / baseWidth) * 250,
                   height: (MediaQuery.of(context).size.height / baseHeight) * 180,
@@ -202,8 +278,8 @@ class _DisconnectedScreenState extends State<DisconnectedScreen> {
               RightButton(onPressed: _Logs),
             ],
           ),
-        ]
-      )
+        ],
+      ),
     );
   }
 }

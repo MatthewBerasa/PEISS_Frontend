@@ -177,7 +177,23 @@ void _DisconnectPressed() async {
     String? deviceID = prefs.getString('deviceID');
     String? userID = prefs.getString('userID');
 
-    //API Call
+    //API Call to check number of users connected to system
+    var systemUsers = await ApiService.getSystemUsers(deviceID.toString());
+    if(systemUsers['error'] != null){
+      print(systemUsers['error']);
+      return;
+    }
+
+    if((systemUsers['result']['usersConnected']).length == 1){ //Last User Connected to System is Disconnecting make System Disconnect from WiFi
+      var wifiDisconnectResponse = await ApiService.updateSystemWiFiConnection(deviceID.toString(), false);
+      if(wifiDisconnectResponse['error'] != null){
+        print(wifiDisconnectResponse['error']);
+        return;
+      }
+    }
+
+
+    //API Call Disconnect User from System 
     var response = await ApiService.disconnectSystem(deviceID.toString(), userID.toString());
 
     if(response['error'] != null){

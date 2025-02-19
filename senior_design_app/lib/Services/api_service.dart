@@ -161,6 +161,38 @@ class ApiService {
     return json.decode(response.body);
   }
 
+  //Method for updating System WiFi Connection 
+  static Future<Map<String, dynamic>> updateSystemWiFiConnection(String deviceID, bool wifiState) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/updateSystemWiFiConnection'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'deviceID': deviceID,
+        'wifiState': wifiState,
+      }),
+    );
+
+    return json.decode(response.body);
+  }
+
+  // Method for getting System Wifi Connection 
+  static Future<Map<String, dynamic>> checkSystemWiFiConnection(String deviceID) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/checkSystemWiFiConnection?deviceID=$deviceID'),
+    );
+
+    return json.decode(response.body); 
+  }
+
+  // Method for getting specific log
+  static Future<Map<String, dynamic>> getSystemUsers(String deviceID) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/getSystemUsers?deviceID=$deviceID'),
+    );  
+
+    return json.decode(response.body); 
+  }
+
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
   final response = await http.post(
     Uri.parse('$baseUrl/refresh_token'),
