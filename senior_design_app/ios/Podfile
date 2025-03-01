@@ -1,46 +1,39 @@
+# Update the first line to enforce static frameworks
 platform :ios, '13.0'
+use_frameworks! :linkage => :static  # Critical change for Firebase compatibility
 
-# Define flutter_root to locate the Flutter SDK
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
-    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+    raise "#{generated_xcode_build_settings_path} must exist. Run 'flutter pub get' first"
   end
 
   File.foreach(generated_xcode_build_settings_path) do |line|
     matches = line.match(/FLUTTER_ROOT\=(.*)/)
     return matches[1].strip if matches
   end
-  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+  raise "FLUTTER_ROOT not found"
 end
 
-# Require podhelper from the Flutter SDK
-require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root
 
-# Set up Flutter pod configuration
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
-  
-  # Install Flutter pods using the correct function
+  # Remove explicit Firebase pods - let FlutterFire handle dependencies
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   
-  # Your Firebase pods
-  pod 'Firebase/Core'
-  pod 'Firebase/Messaging'
-  
-  target 'RunnerTests' do
-    inherit! :search_paths
-  end
-end
-
-# Ensure deployment target consistency
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
-    target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+  # Add these build settings for Firebase
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+          '$(inherited)',
+          'FIRAnalyticsCollectionEnabled=NO',
+          'FIREBASE_ANALYTICS_COLLECTION_ENABLED=NO'
+        ]
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
     end
   end
 end

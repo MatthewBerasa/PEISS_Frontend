@@ -51,7 +51,7 @@
     </array>
     <key>NSNotificationUsageDescription</key>
     <string>We need to send you important notifications</string>
-    <key>FirebaseAppDelegateProxyEnabled</key>
-    <string>YES</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>
