@@ -1,13 +1,27 @@
-platform :ios, '12.0'  # Uncomment this line to specify the platform version
+# Podfile
+platform :ios, '13.0'
 
 target 'Runner' do
-  use_frameworks!  # Use dynamic frameworks
-
-  # Add your actual app dependencies here
-  # pod 'SomeDependency'
+  use_frameworks!
   
-  target 'RunnerTests' do
-    inherit! :search_paths
-    # Add testing dependencies here if you need
+  # Your Firebase pods
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
+
+  # Install all Flutter plugin pods
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
+# Optional test target
+target 'RunnerTests' do
+  inherit! :search_paths
+end
+
+# Ensure deployment target consistency
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
   end
 end
