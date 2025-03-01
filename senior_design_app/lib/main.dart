@@ -18,25 +18,25 @@ void main() async {
   // Ensure widgets are bound
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set preferred orientations
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  // // Set preferred orientations
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]);
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
+  // // Initialize Firebase
+  // await Firebase.initializeApp();
 
-  // Set up foreground message listener
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Received a foreground message: ${message.messageId}');
-    // Optionally, display a local notification here using flutter_local_notifications.
-  });
+  // // Set up foreground message listener
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   print('Received a foreground message: ${message.messageId}');
+  //   // Optionally, display a local notification here using flutter_local_notifications.
+  // });
 
-  // Set up listener for when a notification is tapped/opened
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('User tapped on a notification: ${message.messageId}');
-    // Navigate to a specific screen if desired.
-  });
+  // // Set up listener for when a notification is tapped/opened
+  // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  //   print('User tapped on a notification: ${message.messageId}');
+  //   // Navigate to a specific screen if desired.
+  // });
 
   // Run the app
   runApp(const MyApp());
