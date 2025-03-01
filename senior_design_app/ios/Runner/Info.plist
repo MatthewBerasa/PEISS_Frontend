@@ -49,7 +49,9 @@
     <array>
         <string>remote-notification</string>
     </array>
-	<key>NSUserNotificationUsageDescription</key>
-	<string>We need to send you important notifications</string>
+    <key>NSNotificationUsageDescription</key>
+    <string>We need to send you important notifications</string>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <string>YES</string>
 </dict>
 </plist>
