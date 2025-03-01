@@ -1,0 +1,6 @@
+targets:
+  $default:
+    builders:
+      timezone:
+        options:
+          data: 2024a

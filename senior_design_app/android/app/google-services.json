@@ -1,0 +1,29 @@
+{
+    "project_info": {
+      "project_number": "985837680709",
+      "project_id": "seniordesignpeiss",
+      "storage_bucket": "seniordesignpeiss.firebasestorage.app"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:985837680709:android:45c104a3231ed839454b2c",
+          "android_client_info": {
+            "package_name": "com.example.senior_design_app"
+          }
+        },
+        "oauth_client": [],
+        "api_key": [
+          {
+            "current_key": "AIzaSyB1KcpBbtvEpBv71tS8Hi1w89-zLyGsufk"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
