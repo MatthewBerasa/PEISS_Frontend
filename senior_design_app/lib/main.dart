@@ -26,6 +26,17 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp();
 
+  // Configure Firebase Messaging
+  final messaging = FirebaseMessaging.instance;
+    
+  // Request notification permissions (iOS specific)
+  await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+    
+
   // Set up foreground message listener
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Received a foreground message: ${message.messageId}');

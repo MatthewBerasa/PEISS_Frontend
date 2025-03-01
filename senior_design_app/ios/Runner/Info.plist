@@ -49,5 +49,7 @@
     <array>
         <string>remote-notification</string>
     </array>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We need to send you important notifications</string>
 </dict>
 </plist>
