@@ -10,6 +10,7 @@ import 'Services/api_service.dart'; // Import the ApiService file
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart'; // Import JWT Decoder
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
+import 'firebase_options.dart';
 
 void main() async {
   // Initialize time zones
@@ -23,8 +24,15 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
+  // Initialize Firebase with platform-specific options
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("Firebase initialized successfully");
+  } catch (e) {
+    print("Firebase initialization error: $e");
+  }
 
   // Configure Firebase Messaging
   final messaging = FirebaseMessaging.instance;

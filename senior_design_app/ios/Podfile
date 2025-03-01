@@ -1,25 +1,28 @@
 platform :ios, '13.0'
 use_frameworks! :linkage => :static
 
-# Remove the custom flutter_root definition
-flutter_application_path = File.join('..', '..')
-load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+flutter_application_path = File.expand_path('..', __dir__)
+load File.join(flutter_application_path, 'ios', 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
+  # Explicit Firebase pods
+  pod 'Firebase/CoreOnly', '10.22.0'
+  pod 'FirebaseMessaging', '10.22.0'
+  
+  # Flutter integration
   flutter_install_all_ios_pods(flutter_application_path)
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      # Keep your existing build settings
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'FIRAnalyticsCollectionEnabled=0',
         'FIREBASE_ANALYTICS_COLLECTION_ENABLED=0'
       ]
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
     end
   end
 end
