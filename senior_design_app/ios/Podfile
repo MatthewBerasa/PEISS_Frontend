@@ -1,4 +1,4 @@
-platform :ios, '11.0'  # Uncomment this line to specify the platform version
+platform :ios, '12.0'  # Uncomment this line to specify the platform version
 
 target 'Runner' do
   use_frameworks!  # Use dynamic frameworks
