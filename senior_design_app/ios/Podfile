@@ -1,6 +1,5 @@
-# Update the first line to enforce static frameworks
 platform :ios, '13.0'
-use_frameworks! :linkage => :static  # Critical change for Firebase compatibility
+use_frameworks! :linkage => :static  # Critical for local Firebase builds
 
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
@@ -20,20 +19,22 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  # Remove explicit Firebase pods - let FlutterFire handle dependencies
+  # Remove explicit Firebase pods - FlutterFire handles these
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  
-  # Add these build settings for Firebase
-  post_install do |installer|
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
-          '$(inherited)',
-          'FIRAnalyticsCollectionEnabled=NO',
-          'FIREBASE_ANALYTICS_COLLECTION_ENABLED=NO'
-        ]
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      # Add these lines for local builds
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      config.build_settings['HEADER_SEARCH_PATHS'] = [
+        '$(inherited)',
+        '"${PODS_ROOT}/../Flutter"',
+        '"${PODS_ROOT}/../Flutter/Flutter"'
+      ]
     end
   end
 end
