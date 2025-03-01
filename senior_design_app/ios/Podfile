@@ -1,22 +1,18 @@
 platform :ios, '13.0'
 use_frameworks! :linkage => :static
 
-def flutter_root
-  File.expand_path('..', __FILE__)
-end
-
-require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
-
-flutter_ios_podfile_setup
+# Remove the custom flutter_root definition
+flutter_application_path = File.join('..', '..')
+load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  flutter_install_all_ios_pods(flutter_application_path)
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      # Critical Firebase fix
+      # Keep your existing build settings
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'FIRAnalyticsCollectionEnabled=0',
