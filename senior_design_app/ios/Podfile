@@ -1,15 +1,13 @@
-# Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+platform :ios, '11.0'  # Uncomment this line to specify the platform version
 
 target 'Runner' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+  use_frameworks!  # Use dynamic frameworks
 
-  # Pods for Runner
-
+  # Add your actual app dependencies here
+  # pod 'SomeDependency'
+  
   target 'RunnerTests' do
     inherit! :search_paths
-    # Pods for testing
+    # Add testing dependencies here if you need
   end
-
 end
