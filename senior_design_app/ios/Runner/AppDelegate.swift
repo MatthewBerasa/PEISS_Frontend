@@ -1,6 +1,6 @@
 import UIKit
 import Flutter
-import Firebase  // Add this
+import Firebase
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,8 +8,19 @@ import Firebase  // Add this
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    FirebaseApp.configure()  // Add this
+    
+    // Critical delay for AltStore sideloading compatibility
+    self.perform(#selector(restrictedFirebaseInit), with: nil, afterDelay: 1.0)
+    
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+  
+  // Add this extension method
+  @objc func restrictedFirebaseInit() {
+    if FirebaseApp.app() == nil {
+      FirebaseApp.configure()
+      print("Firebase initialized successfully")
+    }
   }
 }
