@@ -1,28 +1,35 @@
 platform :ios, '13.0'
-use_frameworks! :linkage => :static
+use_frameworks! :linkage => :static  # Critical change for Firebase compatibility
 
-flutter_application_path = File.expand_path('..', __dir__)
-load File.join(flutter_application_path, 'ios', 'Flutter', 'podhelper.rb')
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. Run 'flutter pub get' first"
+  end
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+flutter_ios_podfile_setup
 
 target 'Runner' do
-  # Explicit Firebase pods
-  pod 'Firebase/CoreOnly', '10.22.0'
-  pod 'FirebaseMessaging', '10.22.0'
-  
-  # Flutter integration
-  flutter_install_all_ios_pods(flutter_application_path)
+  # Let FlutterFire handle dependencies
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
-        'FIRAnalyticsCollectionEnabled=0',
-        'FIREBASE_ANALYTICS_COLLECTION_ENABLED=0'
+        'FIRAnalyticsCollectionEnabled=NO',
+        'FIREBASE_ANALYTICS_COLLECTION_ENABLED=NO'
       ]
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
   end
 end
