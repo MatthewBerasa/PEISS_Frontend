@@ -1,5 +1,8 @@
 platform :ios, '13.0'
-use_frameworks! :linkage => :static  # Critical change for Firebase compatibility
+use_frameworks! :linkage => :static
+
+# Add this line to ensure Flutter.h is found
+install_all_flutter_pods(File.dirname(File.realpath(__FILE__)))
 
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
@@ -17,12 +20,12 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  # Let FlutterFire handle dependencies
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
