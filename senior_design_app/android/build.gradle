@@ -1,17 +1,20 @@
 buildscript {
     repositories {
-        google()
+        google()  // Ensure the Google repository is included
         mavenCentral()
     }
     dependencies {
-        // Update the AGP version to 8.2.1
+        // Update the AGP (Android Gradle Plugin) version to 8.2.1
         classpath 'com.android.tools.build:gradle:8.2.1'
+
+        // Add Google services classpath for Firebase setup
+        classpath 'com.google.gms:google-services:4.4.2'  // Add this line for Google services plugin
     }
 }
 
 allprojects {
     repositories {
-        google()
+        google()  // Ensure the Google repository is included for Firebase services
         mavenCentral()
     }
 }

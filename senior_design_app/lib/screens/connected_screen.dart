@@ -33,7 +33,9 @@ class _ConnectedScreenState extends State<ConnectedScreen>{
   }
 
   void _loadSettings() async {
+    var deviceIDResponse = await ApiService.getDeviceID();
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('deviceID', deviceIDResponse['deviceID']);
     String? deviceID = prefs.getString('deviceID');
 
     if (deviceID != null) {

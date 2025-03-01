@@ -199,6 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget build(BuildContext context){
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 20.0),
