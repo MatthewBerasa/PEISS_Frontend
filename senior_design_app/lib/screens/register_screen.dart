@@ -262,6 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   TextField(
                     controller: passwordInput,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
@@ -288,6 +289,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   TextField(
                     controller: confirmPasswordInput,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
