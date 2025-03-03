@@ -206,6 +206,9 @@ class _DisconnectedScreenState extends State<DisconnectedScreen> {
   void _Logout() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove('accessToken');
+    
+    //Delete Firebase Token
+    await ApiService.updateFCMToken(pref.getString('userID').toString(), "");
     await pref.remove('userID');
 
     Navigator.pushReplacement(

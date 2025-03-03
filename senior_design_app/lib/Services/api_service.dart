@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ApiService {
   // Base URL of your API (make sure it's correct and points to your backend server)
@@ -18,11 +19,11 @@ class ApiService {
   }
 
   // Method for registering a user
-  static Future<Map<String, dynamic>> register(String email, String password) async {
+  static Future<Map<String, dynamic>> register(String email, String password, String fcmToken) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email, 'password': password}),
+      body: json.encode({'email': email, 'password': password, 'fcmToken': fcmToken}),
     );
 
     return json.decode(response.body); 
@@ -193,6 +194,22 @@ class ApiService {
     return json.decode(response.body); 
   }
 
+  // Method for updating Firebase Token 
+  static Future<Map<String, dynamic>> updateFCMToken(String userID, String fcmToken) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/updateFCMToken'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'userID': userID, 'fcmToken': fcmToken}),
+    );
+
+    return json.decode(response.body); 
+  }
+
+  static Future<String?> getFcmToken() async {
+  return await FirebaseMessaging.instance.getToken();
+  }
+
+
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
   final response = await http.post(
     Uri.parse('$baseUrl/refresh_token'),
@@ -206,4 +223,6 @@ class ApiService {
     throw Exception('Failed to refresh token: ${response.statusCode}');
   }
 }
+
+
 }

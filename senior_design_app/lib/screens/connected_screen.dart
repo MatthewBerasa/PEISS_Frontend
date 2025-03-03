@@ -228,6 +228,9 @@ void _DisconnectPressed() async {
     //Delete JWT 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('accessToken');
+
+    //Delete Firebase Token
+    await ApiService.updateFCMToken(prefs.getString('userID').toString(), "");
     prefs.remove('userID');
 
     Navigator.pushReplacement(

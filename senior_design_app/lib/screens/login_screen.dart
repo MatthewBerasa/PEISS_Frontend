@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Call the API service method for login
     var response = await ApiService.login(email, password);
 
-    setState(() {
+    setState(() async {
       if(response['error'] != null){
         invalidLogin = 'Password or Email is incorrect.';
         return;
@@ -67,6 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
             prefs.setString('userID', payload['userInfo']['userID']);
           });
 
+          //Store Firebase Token
+          var fcmToken = await ApiService.getFcmToken();
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await ApiService.updateFCMToken(prefs.getString('userID').toString(), fcmToken.toString());
           
           if(payload['userInfo']['isConnected']){
             Navigator.pushReplacement(

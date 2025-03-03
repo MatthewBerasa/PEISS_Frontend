@@ -175,7 +175,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     //Call Register API
-    var response = await ApiService.register(emailInput.text, passwordInput.text);
+    var fcmToken = await ApiService.getFcmToken();
+    var response = await ApiService.register(emailInput.text, passwordInput.text, fcmToken.toString());
 
     if(response['error'] != null){
       incorrectVerificationCode = response['error'].toString();
