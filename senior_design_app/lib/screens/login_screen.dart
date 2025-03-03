@@ -28,68 +28,71 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Function to handle sign-in
   void _signIn() async {
+    // Validate inputs and update UI synchronously
     setState(() {
       emailNotEntered = _emailController.text.isEmpty ? 'Enter an email.' : null;
       passwordNotEntered = _passwordController.text.isEmpty ? 'Enter a password.' : null;
-      
-      if(emailNotEntered != null || passwordNotEntered != null){
-        invalidLogin = null;
-        return;
-      }
     });
-    
-    if(_emailController.text.isEmpty || _passwordController.text.isEmpty){
-      invalidLogin = null;
+
+    if (emailNotEntered != null || passwordNotEntered != null) {
+      setState(() {
+        invalidLogin = null;
+      });
       return;
     }
 
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    // Call the API service method for login
-    var response = await ApiService.login(email, password);
+    try {
+      // Perform API call
+      var response = await ApiService.login(email, password);
+      print("API Response: $response");
 
-    setState(() async {
-      if(response['error'] != null){
-        invalidLogin = 'Password or Email is incorrect.';
+      if (response['error'] != null) {
+        setState(() {
+          invalidLogin = 'Password or Email is incorrect.';
+        });
         return;
       }
-      else{
-        invalidLogin = null;
-        
-        try{
-          final token = JWT.decode(response['accessToken']);
-          final payload = token.payload;
 
-          //Save Login state and user connection state
-          SharedPreferences.getInstance().then((prefs){
-            prefs.setString('accessToken', response['accessToken']);
-            prefs.setString('userID', payload['userInfo']['userID']);
-          });
+      // Decode JWT
+      final token = JWT.decode(response['accessToken']);
+      final payload = token.payload;
 
-          //Store Firebase Token
-          var fcmToken = await ApiService.getFcmToken();
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await ApiService.updateFCMToken(prefs.getString('userID').toString(), fcmToken.toString());
-          
-          if(payload['userInfo']['isConnected']){
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ConnectedScreen())
-            );
-          }
-          else{
-            Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(builder: (context) => DisconnectedScreen())
-            );
-          }
-        }catch(e){
-          print('Error decoding JWT');
-          invalidLogin = 'Invalid JWT Token';
-        }
+      // Save to SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('accessToken', response['accessToken']);
+      await prefs.setString('userID', payload['userInfo']['userID']);
+
+      // Update FCM token
+      String? fcmToken = await ApiService.getFcmToken();
+      var resFCM = await ApiService.updateFCMToken(
+        payload['userInfo']['userID'],
+        fcmToken ?? '',
+      );
+      if (resFCM['error'] != null) {
+        print("FCM Update Error: ${resFCM['error']}");
       }
-    });
+
+      // Navigate based on connection status
+      if (payload['userInfo']['isConnected']) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ConnectedScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DisconnectedScreen()),
+        );
+      }
+    } catch (e) {
+      print("Login Error: $e");
+      setState(() {
+        invalidLogin = 'An error occurred during login.';
+      });
+    }
   }
 
   void _register() async{
