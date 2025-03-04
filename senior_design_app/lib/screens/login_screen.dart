@@ -67,6 +67,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Update FCM token
       String? fcmToken = await ApiService.getFcmToken();
+      if(fcmToken != ''){
+        setState(() {
+          invalidLogin = 'Error: $e';
+        });
+        return;
+      }
       var resFCM = await ApiService.updateFCMToken(
         payload['userInfo']['userID'],
         fcmToken ?? '',
