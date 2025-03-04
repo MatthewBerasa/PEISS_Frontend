@@ -210,15 +210,17 @@ class ApiService {
     try {
       String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       if (apnsToken == null) {
-        throw Exception('APNs token is null');
+        throw Exception('APNs token is null. Push notifications will not work.');
       }
+
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken == null) {
         throw Exception('FCM token is null');
       }
+
       return fcmToken;
-    } catch (e) {
-      throw Exception('Error getting FCM token: $e');
+    } catch (e, stackTrace) {
+      throw Exception('Error getting FCM token: $e\nStackTrace: $stackTrace');
     }
   }
 
