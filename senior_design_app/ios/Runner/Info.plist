@@ -47,17 +47,24 @@
     </dict>
     <key>UIBackgroundModes</key>
     <array>
+        <string>fetch</string>
         <string>remote-notification</string>
     </array>
+    <key>UILocalNotificationUsageDescription</key>
+    <string>We need to send you important notifications</string>
+    <key>UNUserNotificationCenter</key>
+    <string>default</string>
+    <key>UIBadgeAppIcon</key>
+    <true/>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/> 
     <key>NSNotificationUsageDescription</key>
     <string>We need to send you important notifications</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<true/>
-	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
-	<false/>
-	<key>FIREBASE_PERFORMANCE_COLLECTION_ENABLED</key>
-	<false/>
-	<key>FirebaseAutomaticScreenReportingEnabled</key>
-	<false/>
+    <key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
+    <false/>
+    <key>FIREBASE_PERFORMANCE_COLLECTION_ENABLED</key>
+    <false/>
+    <key>FirebaseAutomaticScreenReportingEnabled</key>
+    <false/>
 </dict>
 </plist>

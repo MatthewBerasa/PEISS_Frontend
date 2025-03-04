@@ -12,6 +12,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
 import 'firebase_options.dart';
 
+
+
+// Background message handler (required for FCM on iOS)
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print("Handling a background message: ${message.messageId}");
+}
+
 void main() async {
   // Initialize time zones
   tz.initializeTimeZones();
@@ -33,17 +41,9 @@ void main() async {
   } catch (e) {
     print("Firebase initialization error: $e");
   }
-
-  // Configure Firebase Messaging
-  final messaging = FirebaseMessaging.instance;
-    
-  // Request notification permissions (iOS specific)
-  await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-    
+  
+  // Set up background message handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Set up foreground message listener
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
