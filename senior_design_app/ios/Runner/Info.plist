@@ -52,7 +52,7 @@
     <key>NSNotificationUsageDescription</key>
     <string>We need to send you important notifications</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
+	<true/>
 	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
 	<false/>
 	<key>FIREBASE_PERFORMANCE_COLLECTION_ENABLED</key>
