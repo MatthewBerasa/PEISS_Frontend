@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       String? fcmToken = await ApiService.getFcmToken();
       if(fcmToken != ''){
         setState(() {
-          invalidLogin = 'Error: $e';
+          invalidLogin = fcmToken;
         });
         return;
       }
