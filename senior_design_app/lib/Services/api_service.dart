@@ -207,51 +207,7 @@ class ApiService {
   }
 
   static Future<String?> getFcmToken() async {
-    try {
-      final messaging = FirebaseMessaging.instance;
-
-      // Check and request permissions
-      final settings = await messaging.getNotificationSettings();
-      if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
-        await messaging.requestPermission(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-      }
-      final updatedSettings = await messaging.getNotificationSettings();
-      if (updatedSettings.authorizationStatus != AuthorizationStatus.authorized) {
-        print("Notifications not authorized");
-        return null;
-      }
-
-      // Handle APNs token on iOS
-      if (Platform.isIOS) {
-        String? apnsToken = await messaging.getAPNSToken();
-        if (apnsToken == null) {
-          print("APNs token not available yet, waiting...");
-          await Future.delayed(Duration(seconds: 3));
-          apnsToken = await messaging.getAPNSToken();
-          if (apnsToken == null) {
-            print("APNs token still not available");
-            return null;
-          }
-        }
-        print("APNs Token: $apnsToken");
-      }
-
-      // Get FCM token
-      String? fcmToken = await messaging.getToken();
-      if (fcmToken == null) {
-        print("Failed to retrieve FCM token");
-        return null;
-      }
-      print("FCM Token: $fcmToken");
-      return fcmToken;
-    } catch (e) {
-      print("Error getting FCM token: $e");
-      return null;
-    }
+    return await FirebaseMessaging.instance.getToken();
   }
 
 

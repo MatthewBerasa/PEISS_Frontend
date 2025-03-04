@@ -57,7 +57,7 @@
     <key>UIBadgeAppIcon</key>
     <true/>
     <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/> 
+    <true/> 
     <key>NSNotificationUsageDescription</key>
     <string>We need to send you important notifications</string>
     <key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
