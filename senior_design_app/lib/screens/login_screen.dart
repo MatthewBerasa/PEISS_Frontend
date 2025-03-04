@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print("Login Error: $e");
       setState(() {
-        invalidLogin = 'An error occurred during login.';
+        invalidLogin = 'Error: $e';
       });
     }
   }

@@ -206,18 +206,7 @@ class ApiService {
   }
 
   static Future<String?> getFcmToken() async {
-    try {
-      final settings = await FirebaseMessaging.instance.getNotificationSettings();
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        return await FirebaseMessaging.instance.getToken();
-      } else {
-        print("Notifications not authorized yet");
-        return null;
-      }
-    } catch (e) {
-      print("Error getting FCM token: $e");
-      return null;
-    }
+    return await FirebaseMessaging.instance.getToken();
   }
 
 
