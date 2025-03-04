@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'dart:io' show Platform;
 
 class ApiService {
@@ -206,21 +208,35 @@ class ApiService {
     return json.decode(response.body); 
   }
   
-  static Future<String?> getFcmToken() async {
+static Future<String?> getFcmToken() async {
     try {
       String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       if (apnsToken == null) {
-        throw Exception('APNs token is null. Push notifications will not work.');
+        throw FirebaseException(
+          plugin: 'firebase_messaging',
+          code: 'APNs-Token-Null',
+          message: 'APNs token is missing. Push notifications will not work.',
+        );
       }
 
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken == null) {
-        throw Exception('FCM token is null');
+        throw FirebaseException(
+          plugin: 'firebase_messaging',
+          code: 'FCM-Token-Null',
+          message: 'FCM token is missing. Firebase is not providing a token.',
+        );
       }
 
       return fcmToken;
-    } catch (e, stackTrace) {
-      throw Exception('Error getting FCM token: $e\nStackTrace: $stackTrace');
+    } on FirebaseException catch (e) {
+      throw FirebaseException(
+        plugin: e.plugin,
+        code: e.code,
+        message: 'Firebase error: ${e.message}',
+      );
+    } catch (e) {
+      throw Exception('Error getting FCM token: $e');
     }
   }
 
