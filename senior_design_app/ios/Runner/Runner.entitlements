@@ -6,7 +6,7 @@
     <string>development</string>
     <key>keychain-access-groups</key>
     <array>
-        <string>$(AppIdentifierPrefix)com.peiss.senior-design-app</string>
+        <string>$(AppIdentifierPrefix)com.peiss.senior-design-app.623V5SQHD5</string>
     </array>
 </dict>
 </plist>

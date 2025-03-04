@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.peiss.senior-design-app</string>
+	<string>com.peiss.senior-design-app.623V5SQHD5</string>
 	<key>PROJECT_ID</key>
 	<string>seniordesignpeiss</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:985837680709:ios:31a0cbecc8b90ad5454b2c</string>
+	<string>1:985837680709:ios:dc33185c90958d55454b2c</string>
 </dict>
 </plist>
