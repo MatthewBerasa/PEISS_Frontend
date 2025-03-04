@@ -210,25 +210,20 @@ class ApiService {
   
 static Future<String?> getFcmToken() async {
     try {
+      var err = "";
       String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       if (apnsToken == null) {
-        throw FirebaseException(
-          plugin: 'firebase_messaging',
-          code: 'APNs-Token-Null',
-          message: 'APNs token is missing. Push notifications will not work.',
-        );
+        err = 'APNs token is missing. Push notifications will not work.';
+        return err;
       }
 
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken == null) {
-        throw FirebaseException(
-          plugin: 'firebase_messaging',
-          code: 'FCM-Token-Null',
-          message: 'FCM token is missing. Firebase is not providing a token.',
-        );
+        err = 'FCM token is missing. Firebase is not providing a token.';
+        return err;
       }
 
-      return fcmToken;
+      return err;
     } on FirebaseException catch (e) {
       throw FirebaseException(
         plugin: e.plugin,
