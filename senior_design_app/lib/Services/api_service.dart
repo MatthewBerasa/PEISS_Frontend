@@ -205,11 +205,22 @@ class ApiService {
 
     return json.decode(response.body); 
   }
-
+  
   static Future<String?> getFcmToken() async {
-    return await FirebaseMessaging.instance.getToken();
+    try {
+      String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+      if (apnsToken == null) {
+        throw Exception('APNs token is null');
+      }
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        throw Exception('FCM token is null');
+      }
+      return fcmToken;
+    } catch (e) {
+      throw Exception('Error getting FCM token: $e');
+    }
   }
-
 
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
   final response = await http.post(
