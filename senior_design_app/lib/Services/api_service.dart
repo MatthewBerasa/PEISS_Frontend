@@ -209,7 +209,6 @@ class ApiService {
   }
   
 static Future<String?> getFcmToken() async {
-    try {
       var err = "";
       String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       if (apnsToken == null) {
@@ -224,15 +223,6 @@ static Future<String?> getFcmToken() async {
       }
 
       return err;
-    } on FirebaseException catch (e) {
-      throw FirebaseException(
-        plugin: e.plugin,
-        code: e.code,
-        message: 'Firebase error: ${e.message}',
-      );
-    } catch (e) {
-      throw Exception('Error getting FCM token: $e');
-    }
   }
 
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
