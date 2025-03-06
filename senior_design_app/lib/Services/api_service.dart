@@ -216,13 +216,13 @@ static Future<String?> getFcmToken() async {
         return err;
       }
 
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken == null) {
-        err = 'FCM token is missing. Firebase is not providing a token.';
-        return err;
-      }
+      // String? fcmToken = await FirebaseMessaging.instance.getToken();
+      // if (fcmToken == null) {
+      //   err = 'FCM token is missing. Firebase is not providing a token.';
+      //   return err;
+      // }
 
-      return err;
+      return apnsToken;
   }
 
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
