@@ -209,7 +209,15 @@ class ApiService {
   }
   
   static Future<String?> getFcmToken() async {
-    return await FirebaseMessaging.instance.getToken();
+     try {
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        throw Exception('FCM token is null');
+      }
+      return fcmToken;
+    } catch (e) {
+      throw Exception('Error getting FCM token: $e');
+    }
   }
 
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {

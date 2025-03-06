@@ -44,55 +44,56 @@ class _LoginScreenState extends State<LoginScreen> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    // Perform API call
-    var response = await ApiService.login(email, password);
-    print("API Response: $response");
+   try {
+      // Perform API call
+      var response = await ApiService.login(email, password);
+      print("API Response: $response");
 
-    if (response['error'] != null) {
-      setState(() {
-        invalidLogin = 'Password or Email is incorrect.';
-      });
-      return;
-    }
+      if (response['error'] != null) {
+        setState(() {
+          invalidLogin = 'Password or Email is incorrect.';
+        });
+        return;
+      }
 
-    // Decode JWT
-    final token = JWT.decode(response['accessToken']);
-    final payload = token.payload;
+      // Decode JWT
+      final token = JWT.decode(response['accessToken']);
+      final payload = token.payload;
 
-    // Save to SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('accessToken', response['accessToken']);
-    await prefs.setString('userID', payload['userInfo']['userID']);
+      // Save to SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('accessToken', response['accessToken']);
+      await prefs.setString('userID', payload['userInfo']['userID']);
 
-    // Update FCM token
-    String? fcmToken = await ApiService.getFcmToken();
-    if(fcmToken != ''){
-      setState(() {
-        invalidLogin = fcmToken;
-      });
-      return;
-    }
-    var resFCM = await ApiService.updateFCMToken(
-      payload['userInfo']['userID'],
-      fcmToken ?? '',
-    );
-    if (resFCM['error'] != null) {
-      print("FCM Update Error: ${resFCM['error']}");
-    }
-
-    // Navigate based on connection status
-    if (payload['userInfo']['isConnected']) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ConnectedScreen()),
+      // Update FCM token
+      String? fcmToken = await ApiService.getFcmToken();
+      var resFCM = await ApiService.updateFCMToken(
+        payload['userInfo']['userID'],
+        fcmToken ?? '',
       );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DisconnectedScreen()),
-      );
+      if (resFCM['error'] != null) {
+        print("FCM Update Error: ${resFCM['error']}");
+      }
+
+      // Navigate based on connection status
+      if (payload['userInfo']['isConnected']) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ConnectedScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DisconnectedScreen()),
+        );
+      }
+    } catch (e) {
+      print("Login Error: $e");
+      setState(() {
+        invalidLogin = 'Error: $e';
+      });
     }
-  } 
+  }
 
   void _register() async{
     Navigator.pushReplacement(
