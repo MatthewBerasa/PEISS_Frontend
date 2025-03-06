@@ -208,21 +208,8 @@ class ApiService {
     return json.decode(response.body); 
   }
   
-static Future<String?> getFcmToken() async {
-      var err = "";
-      String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-      if (apnsToken == null) {
-        err = 'APNs token is missing. Push notifications will not work.';
-        return err;
-      }
-
-      // String? fcmToken = await FirebaseMessaging.instance.getToken();
-      // if (fcmToken == null) {
-      //   err = 'FCM token is missing. Firebase is not providing a token.';
-      //   return err;
-      // }
-
-      return apnsToken;
+  static Future<String?> getFcmToken() async {
+    return await FirebaseMessaging.instance.getToken();
   }
 
   static Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
