@@ -326,7 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 20.0),
                     SizedBox(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height / baseHeight * 50.0,
@@ -351,7 +351,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20), // Add some bottom padding
+                    SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 20.0), // Add some bottom padding
                   ],
                 ),
               ),
