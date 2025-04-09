@@ -179,152 +179,158 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: 30.0),
-          child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 20.0),
-              Align(
-                alignment: Alignment.topLeft,
-                child: TextButton(
-                  onPressed: backToLogin,
-                  child: Text(
-                    'X',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: MediaQuery.of(context).size.height / baseHeight * 20.0,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ),
-              PEISSText(),
-              PEISSLogo(),
-              Padding(
-                padding: EdgeInsets.all(16.0),
+  return Scaffold(
+    resizeToAvoidBottomInset: true,
+    body: SafeArea(
+      child: Flex(
+        direction: Axis.vertical,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                 child: Column(
                   children: [
+                    SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 20.0),
                     Align(
-                        alignment: Alignment.topLeft,
+                      alignment: Alignment.topLeft,
+                      child: TextButton(
+                        onPressed: backToLogin,
                         child: Text(
-                          'Email',
+                          'X',
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
                             color: Colors.black,
+                            fontSize: MediaQuery.of(context).size.height / baseHeight * 20.0,
                           ),
-                        )),
-                    TextField(
-                      controller: emailInput,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
                     ),
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          emailNotFilled ?? '',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                    PEISSText(),
+                    PEISSLogo(),
+                    Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Email',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              color: Colors.black,
+                            ),
                           ),
-                        )),
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Password',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
-                            color: Colors.black,
+                        ),
+                        TextField(
+                          controller: emailInput,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
                           ),
-                        )),
-                    TextField(
-                      controller: passwordInput,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          passwordNotFilled ?? '',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            emailNotFilled ?? '',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                            ),
                           ),
-                        )),
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Confirm Password',
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
-                            color: Colors.black,
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Password',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              color: Colors.black,
+                            ),
                           ),
-                        )),
-                    TextField(
-                      controller: confirmPasswordInput,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
+                        ),
+                        TextField(
+                          controller: passwordInput,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            passwordNotFilled ?? '',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Confirm Password',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        TextField(
+                          controller: confirmPasswordInput,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        if (notMatchingPassword != null)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              notMatchingPassword!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              ),
+                            ),
+                          ),
+                        if (notPasswordValidLength != null)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              notPasswordValidLength!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              ),
+                            ),
+                          ),
+                        if (notPasswordContainsCaptial != null)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              notPasswordContainsCaptial!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              ),
+                            ),
+                          ),
+                        if (notValidEmail != null)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              notValidEmail!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                    if (notMatchingPassword != null)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        notMatchingPassword!,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
-                        )
-                      )
-                    ),
-                    if (notPasswordValidLength != null)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        notPasswordValidLength!,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
-                        )
-                      )
-                    ),
-                    if (notPasswordContainsCaptial != null)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        notPasswordContainsCaptial!,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
-                        )
-                      )
-                    ),
-                    if (notValidEmail != null)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        notValidEmail!,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: MediaQuery.of(context).size.height / baseHeight * 18.0,
-                        )
-                      )
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height / baseHeight * 50.0,
-                    child: ElevatedButton(
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height / baseHeight * 50.0,
+                      child: ElevatedButton(
                         onPressed: verifyInputParameters,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -342,12 +348,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
-                        ))),
-              )
-            ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20), // Add some bottom padding
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
