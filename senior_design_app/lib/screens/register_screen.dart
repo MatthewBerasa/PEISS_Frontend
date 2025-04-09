@@ -24,10 +24,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   //Error Texts to Display to User
   String? emailNotFilled = '';
   String? passwordNotFilled = '';
-  String? notValidEmail = '';
-  String? notMatchingPassword = '';
-  String? notPasswordValidLength = '';
-  String? notPasswordContainsCaptial = '';
+  String? notValidEmail = null;
+  String? notMatchingPassword = null;
+  String? notPasswordValidLength = null;
+  String? notPasswordContainsCaptial = null;
 
   String? incorrectVerificationCode = '';
 
@@ -326,7 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                       ],
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 20.0),
+                    SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 30.0),
                     SizedBox(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height / baseHeight * 50.0,
