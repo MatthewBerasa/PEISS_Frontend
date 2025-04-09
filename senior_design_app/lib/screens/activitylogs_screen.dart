@@ -6,6 +6,7 @@ import 'disconnected_screen.dart';
 import 'connected_screen.dart';
 import '../components.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:math' as math;
 
 
 //Reference Sizes
@@ -153,11 +154,14 @@ class LogDisplay extends StatelessWidget{
           onPressed: () => _clickDetailedLog(logID, context),
           child: Row(
             children: [
-              CachedNetworkImage(
-                imageUrl: imageURL,
-                height: MediaQuery.of(context).size.height / baseHeight * 100.0,
-                width: MediaQuery.of(context).size.width / baseWidth * 100.0,
-                fit: BoxFit.contain,
+              RotatedBox(
+                quarterTurns: 1,
+                child: CachedNetworkImage(
+                  imageUrl: imageURL,
+                  height: MediaQuery.of(context).size.height / baseHeight * 100.0,
+                  width: MediaQuery.of(context).size.width / baseWidth * 100.0,
+                  fit: BoxFit.contain,
+                )
               ),
               SizedBox(width: MediaQuery.of(context).size.width / baseWidth * 60.0),
               Column(

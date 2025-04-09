@@ -6,6 +6,7 @@ import 'connected_screen.dart';
 import 'activitylogs_screen.dart';
 import '../components.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:math' as math;
 
 //Reference Sizes
 final baseHeight = 914;
@@ -159,11 +160,14 @@ void getAlarmState() async {
                   )
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / baseHeight * 50.0),
-                CachedNetworkImage(
-                  imageUrl: imageURL,
-                  height: MediaQuery.of(context).size.height / baseHeight * 350.0,
-                  width: MediaQuery.of(context).size.width / baseWidth * 350.0,
-                  fit: BoxFit.fill,
+                Transform.rotate(
+                  angle: math.pi / 2,
+                  child: CachedNetworkImage(
+                    imageUrl: imageURL,
+                    height: MediaQuery.of(context).size.height / baseHeight * 350.0,
+                    width: MediaQuery.of(context).size.width / baseWidth * 350.0,
+                    fit: BoxFit.fill,
+                  )
                 ),
                 SizedBox(
                       height: MediaQuery.of(context).size.height / baseHeight * 100.0,
